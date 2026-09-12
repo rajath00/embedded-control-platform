@@ -1,13 +1,16 @@
 #pragma once
 
 #include<vector>
-#include "sensor_layer.hpp"
+#include "sensors/sensor_layer.hpp"
 #include<deque>
+#include<unordered_map>
 
 //process already-valid measurements
 
 struct MovingAverageState {
     std::deque<float> history;
+    float sum{0.0f};
+    bool wasConnected{false};
 };
 
 class FilterLayer {

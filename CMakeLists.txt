@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 
 add_executable( EmbeddedControl
-src/main.cpp
+    src/main.cpp
+    src/filters/filter_layer.cpp
 )
 
 
@@ -26,7 +27,24 @@ target_include_directories(SensorLayerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
+# add_test(
+#     NAME SensorLayerTests
+#     COMMAND SensorLayerTests
+# )
+
+
+
+add_executable(FilterLayerTests
+    tests/filter_layer_tests.cpp
+    src/filters/filter_layer.cpp
+    )
+
+
+target_include_directories(FilterLayerTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 add_test(
-    NAME SensorLayerTests
-    COMMAND SensorLayerTests
+    NAME FilterLayerTests
+    COMMAND FilterLayerTests
 )

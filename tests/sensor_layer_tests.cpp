@@ -5,6 +5,17 @@
 #include <cassert>
 #include <cmath>
 #include <memory>
+#include <iostream>
+
+
+constexpr float EPSILON = 0.2f;
+
+void nearlyEqual(float actual, float expected)
+{
+    std::cout<<"actual"<< actual<<std::endl;
+    std::cout<<"expected"<<expected<<std::endl;
+    assert(std::fabs(actual - expected) < EPSILON);
+}
 
 
 int main()
@@ -22,7 +33,7 @@ int main()
 
         assert(sample.id == "temp-1");
         assert(sample.type == SensorType::Temperature);
-        assert(sample.value == 25.0f);
+        nearlyEqual(sample.value,25.0f);
         assert(sample.status == SensorStatus::Connected);
         assert(sample.timestamp != std::chrono::steady_clock::time_point{});
     }

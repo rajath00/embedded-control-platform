@@ -1,7 +1,7 @@
 #ifndef CONTROL_PLATFORM_HPP
 #define CONTROL_PLATFORM_HPP
 
-#include "sensor_layer.hpp"
+#include "sensors/sensor_layer.hpp"
 
 
 class ControlPlatform {
