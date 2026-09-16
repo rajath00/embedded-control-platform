@@ -1,11 +1,14 @@
 #include "filters/filter_layer.hpp"
- #include <numeric>
 
- #include<iostream>
+#include <cassert>
+#include <iostream>
 
-FilterLayer::FilterLayer(std::size_t windowSize)
-    : windowSize_(windowSize)
+FilterLayer::FilterLayer(FilterType type,std::size_t windowSize,float alpha)
+    : type_(type), windowSize_(windowSize), alpha_{alpha}
 {
+    assert(windowSize > 0);
+    assert(alpha >= 0.0f && alpha <= 1.0f);
+
 }
 
 std::vector<SensorSample> FilterLayer::process(const std::vector<SensorSample>& samples)
@@ -16,14 +19,15 @@ std::vector<SensorSample> FilterLayer::process(const std::vector<SensorSample>& 
     {
         if(sample.status != SensorStatus::Connected)
         {
-            sample.value = 0.0f;
             reset(sample.id);
+            continue;
         }
-        else
+
+        if (type_ == FilterType::MovingAverage)
         {
-            auto &state = states_[sample.id];
+            auto &state = movingAverageStates_[sample.id];
             state.sum +=sample.value;
-            if (state.history.size()==windowSize_)
+            if (state.history.size()>=windowSize_)
             {
                 state.sum -=state.history.front();
                 state.history.pop_front();
@@ -32,6 +36,22 @@ std::vector<SensorSample> FilterLayer::process(const std::vector<SensorSample>& 
 
             sample.value = state.sum/static_cast<float>(state.history.size());
         }
+        else if(type_==FilterType::LowPass)
+        {
+            auto &state = lowPassStates_[sample.id];
+
+            if(!state.initialized)
+            {
+                state.previousValue = sample.value;
+                state.initialized = true;
+            }
+            else
+            {
+                state.previousValue = alpha_*sample.value + (1.0f-alpha_) * state.previousValue;
+            }
+
+            sample.value = state.previousValue;
+        }
 
     }
     return filteredSamples;
@@ -39,23 +59,43 @@ std::vector<SensorSample> FilterLayer::process(const std::vector<SensorSample>& 
 }
 
 
-
 void FilterLayer::reset(const std::string& sensorId)
 {
-    const auto it = states_.find(sensorId);
+    if(type_ == FilterType::MovingAverage)
+    {
+        const auto it = movingAverageStates_.find(sensorId);
 
-    if (it != states_.end()) {
-        it->second.history.clear();
-        it->second.sum = 0.0f;
-        it->second.wasConnected = false;
+        if (it != movingAverageStates_.end()) {
+            it->second.history.clear();
+            it->second.sum = 0.0f;
+         }
     }
+    else if(type_ == FilterType::LowPass)
+    {
+        const auto it = lowPassStates_.find(sensorId);
+        if (it != lowPassStates_.end())
+        {
+            it->second.initialized = false;
+            it->second.previousValue = 0.0f;
+        }
+    }
+
 }
 
 void FilterLayer::resetAll()
 {
-    for(auto &state:states_)
+    if(type_ == FilterType::MovingAverage)
     {
-        reset(state.first);
+        for(auto &state:movingAverageStates_)
+        {
+            reset(state.first);
+        }
+    }
+    else if(type_ == FilterType::LowPass)
+    {
+        for(auto &state:lowPassStates_)
+        {
+            reset(state.first);
+        }
     }
 }
-

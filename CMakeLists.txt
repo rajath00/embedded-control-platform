@@ -25,12 +25,13 @@ add_executable(SensorLayerTests
 
 target_include_directories(SensorLayerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/tests
 )
 
-# add_test(
-#     NAME SensorLayerTests
-#     COMMAND SensorLayerTests
-# )
+add_test(
+    NAME SensorLayerTests
+    COMMAND SensorLayerTests
+)
 
 
 
@@ -42,6 +43,7 @@ add_executable(FilterLayerTests
 
 target_include_directories(FilterLayerTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/tests
 )
 
 add_test(

@@ -10,19 +10,34 @@
 struct MovingAverageState {
     std::deque<float> history;
     float sum{0.0f};
-    bool wasConnected{false};
 };
+
+enum class FilterType{
+    MovingAverage,
+    LowPass
+};
+
+struct LowPassState {
+    float previousValue{0.0f};
+    bool initialized{false};
+};
+
+
 
 class FilterLayer {
 
     private:
 
+        FilterType type_;
         std::size_t windowSize_;
-        std::unordered_map<std::string, MovingAverageState> states_;
+        float alpha_{0.0f};
+
+        std::unordered_map<std::string,LowPassState> lowPassStates_;
+        std::unordered_map<std::string, MovingAverageState> movingAverageStates_;
 
     public:
 
-        explicit FilterLayer(std::size_t windowSize = 5);
+        explicit FilterLayer(FilterType type = FilterType::MovingAverage, std::size_t windowSize = 5,float alpha = 0.5f);
 
         std::vector<SensorSample> process(const std::vector<SensorSample>& samples);       
         //The filter receives sensor-layer output. It does not access hardware or simulated sensors directly.
