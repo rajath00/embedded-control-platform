@@ -1,0 +1,22 @@
+name: CMake CI
+
+on:
+    push:
+
+jobs:
+    build-and-test:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out repository
+            uses: actions/checkout@v4
+
+            - name: Configure
+            run: cmake -S . -B build
+
+
+            - name: Build
+            run: comake --build build
+
+            - name: Test
+            run: ctest --test-dir build --output-on-failure
