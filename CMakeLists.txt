@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.10)
-project(EmbeddedControlPlatform)
+cmake_minimum_required(VERSION 3.13)
+project(EmbeddedControlPlatform LANGUAGES CXX)
 option(ENABLE_SANITIZERS "Enable AddressSanitizer and UndefinedBehaviorSanitizer" OFF)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -12,26 +12,47 @@ if(ENABLE_CLANG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXECUTABLE}")
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_compile_options(-g)
-endif()
 
 if(ENABLE_SANITIZERS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     add_compile_options(-fsanitize=address,undefined -fno-omit-frame-pointer)
     add_link_options(-fsanitize=address,undefined)
 endif()
 
-add_executable( EmbeddedControl
-    src/main.cpp
+
+# Sensor abstraction, SensorLayer, and simulated sensor headers.
+# The current implementation is header-only.
+
+add_library(sensor-library INTERFACE)
+
+target_include_directories(sensor-library INTERFACE
+        ${PROJECT_SOURCE_DIR}/include
+    )
+
+#Signal-filter implementation
+
+add_library(filter-library
     src/filters/filter_layer.cpp
-)
+    )
 
+target_link_libraries(filter-library PUBLIC
+    sensor-library)
 
-target_include_directories(EmbeddedControl PRIVATE
+target_include_directories(filter-library PUBLIC
     ${PROJECT_SOURCE_DIR}/include
+    )
+
+# Runnable simulator application.
+
+add_executable(thermal-simulator
+    src/main.cpp
 )
 
-link_directories(/usr/local/lib)
+target_link_libraries(thermal-simulator PRIVATE
+    sensor-library
+    filter-library
+    )
+
+#Tests
 
 enable_testing()
 
@@ -40,8 +61,11 @@ add_executable(SensorLayerTests
 )
 
 target_include_directories(SensorLayerTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/tests
+)
+
+target_link_libraries(SensorLayerTests PRIVATE
+    sensor-library
 )
 
 add_test(
@@ -49,17 +73,17 @@ add_test(
     COMMAND SensorLayerTests
 )
 
-
-
 add_executable(FilterLayerTests
     tests/filter_layer_tests.cpp
-    src/filters/filter_layer.cpp
     )
 
 
 target_include_directories(FilterLayerTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/tests
+)
+
+target_link_libraries(FilterLayerTests PRIVATE
+    filter-library
 )
 
 add_test(
