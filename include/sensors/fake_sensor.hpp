@@ -5,12 +5,12 @@
 #include <functional>
 
 class FakeSensor : public ISensorSource {
-public:
+  public:
     explicit FakeSensor(SensorSample sample) : sample_(sample) {}
 
     SensorSample acquire() override { return sample_; }
 
-private:
+  private:
     SensorSample sample_;
 };
 

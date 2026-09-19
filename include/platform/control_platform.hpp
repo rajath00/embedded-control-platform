@@ -3,24 +3,15 @@
 
 #include "sensors/sensor_layer.hpp"
 
-
 class ControlPlatform {
-    private:
-        SensorLayer sensorLayer_;
-        // FilterLayer filters_;
-        // std::vector<std::unique_ptr<IController>> controllers_;
-        // std::vector<std::unique_ptr<IService>> services_;
+  private:
+    SensorLayer sensorLayer_;
+    // FilterLayer filters_;
+    // std::vector<std::unique_ptr<IController>> controllers_;
+    // std::vector<std::unique_ptr<IService>> services_;
 
-    public:
-        void runCycle()
-        {
-
-        }
-
-        
+  public:
+    void runCycle() {}
 };
-
-
-
 
 #endif

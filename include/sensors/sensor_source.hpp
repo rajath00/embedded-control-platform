@@ -1,25 +1,19 @@
 #ifndef SENSOR_SOURCE_HPP
 #define SENSOR_SOURCE_HPP
 
-
-
 #include "sensor_sample.hpp"
 
-
-
 class ISensorSource {
-public:
+  public:
     virtual ~ISensorSource() = default;
 
-    virtual SensorSample acquire() = 0; 
-    //acquire function. It has a return type of Sensor Sample. Any Sensor that is derived from this class must have an acquire function.
-    // Withought this function it cannot be created.
-
+    virtual SensorSample acquire() = 0;
+    // acquire function. It has a return type of Sensor Sample. Any Sensor that is derived from this
+    // class must have an acquire function.
+    //  Withought this function it cannot be created.
 };
 
 #endif
-
-
 
 /*
 

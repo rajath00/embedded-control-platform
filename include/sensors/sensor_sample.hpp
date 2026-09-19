@@ -1,38 +1,26 @@
 #ifndef SENSOR_SAMPLE_HPP
 #define SENSOR_SAMPLE_HPP
 
-#include<chrono>
-#include<string>
+#include <chrono>
+#include <string>
 
+enum class SensorType { Temperature, Pressure, Flow };
 
-enum class SensorType
-{
-    Temperature,
-    Pressure,
-    Flow
-};
+enum class SensorStatus { Connected, Disconnected, Invalid };
 
-enum class SensorStatus
-{
-    Connected,
-    Disconnected,
-    Invalid
-};
-
-
-//This is the data packet that moves between layers.
+// This is the data packet that moves between layers.
 struct SensorSample {
     std::string id;
     SensorType type;
     float value;
-    const char* unit;
+    const char *unit;
     SensorStatus status;
     std::chrono::steady_clock::time_point timestamp;
 };
 
 #endif
 
-//the common measurement format
+// the common measurement format
 
 /*
 
@@ -45,7 +33,7 @@ unit:      °C
 status:    Connected
 timestamp: time when it was acquired
 
-Using one common format means the sensor layer and filter layer can handle temperature, pressure, and flow in the same way.
-SensorType identifies the kind of sensor. 
-SensorStatus tells whether the sensor is connected, disconnected, or has produced an invalid reading.
+Using one common format means the sensor layer and filter layer can handle temperature, pressure,
+and flow in the same way. SensorType identifies the kind of sensor. SensorStatus tells whether the
+sensor is connected, disconnected, or has produced an invalid reading.
 */

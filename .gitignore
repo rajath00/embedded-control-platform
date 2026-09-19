@@ -1,0 +1,25 @@
+# CMake build directories and generated files
+/build/
+/build~/
+/cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+CTestTestfile.cmake
+cmake_install.cmake
+Makefile
+build*/
+
+# Compiled binaries and object files
+*.o
+*.obj
+*.a
+*.so
+*.dll
+*.dylib
+*.exe
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.swp
+*~
