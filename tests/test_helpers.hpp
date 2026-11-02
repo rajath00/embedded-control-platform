@@ -14,3 +14,11 @@ void nearlyEqual(float actual, float expected, const char *message) {
     }
     assert(std::fabs(actual - expected) < EPSILON);
 }
+
+
+// test only sensor
+
+// class SequenceSensor: public ISensorSource {
+//     public:
+
+// };

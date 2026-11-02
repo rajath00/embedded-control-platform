@@ -1,0 +1,31 @@
+{
+  "sensors": [
+    {
+      "id": "temp-heater-1",
+      "type": "temperature",
+      "unit": "C",
+      "range": { "min": -40.0, "max": 125.0 },
+      "noiseStdDev": 0.2,
+      "offset": 0.0,
+      "connected": true
+    },
+    {
+      "id": "pressure-line-1",
+      "type": "pressure",
+      "unit": "kPa",
+      "range": { "min": 0.0, "max": 300.0 },
+      "noiseStdDev": 1.5,
+      "offset": 0.0,
+      "connected": true
+    },
+    {
+      "id": "flow-pump-1",
+      "type": "flow",
+      "unit": "L/min",
+      "range": { "min": 0.0, "max": 100.0 },
+      "noiseStdDev": 0.1,
+      "offset": 0.0,
+      "connected": true
+    }
+  ]
+}

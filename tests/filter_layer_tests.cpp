@@ -158,4 +158,45 @@ int main() {
         nearlyEqual(reconnected[0].value, 50.0f,
                     "First sample after reconnection must start fresh");
     }
+
+    // Add constant, noisy and step results to the filter suite
+    {
+
+        FilterLayer filter(FilterType::MovingAverage,3);
+
+        for(int index=0;index<5;index++)
+        {
+            const auto result = filter.process({sample("temp-1",25.0f)});
+            nearlyEqual(result[0].value,25.0f,"A constant signal must remain constant");
+        }
+    }
+// Noisy signal: pass a fixed sequence around 25.0 so the test is repeatable. For a size-3 moving average, the final window is [ 24.9,25.2,24.8] whose expected average is 24.9667
+    {
+        FilterLayer filter(FilterType::MovingAverage, 3);
+
+        filter.process({sample("temp-1", 24.8f)});
+        filter.process({sample("temp-1", 25.3f)});
+        filter.process({sample("temp-1", 24.9f)});
+        const auto result = filter.process({sample("temp-1", 25.2f)});
+
+        nearlyEqual(result[0].value, (24.9f + 25.3f + 25.2f) / 3.0f,
+                    "The filter must average the latest noisy readings");
+    }
+
+    // Step change: establish a steady state, then jump from 20 to 80. A moving average of three readings should transition gradully: 
+    {
+        FilterLayer filter(FilterType::MovingAverage, 3);
+
+        filter.process({sample("temp-1", 20.0f)});
+        filter.process({sample("temp-1", 20.0f)});
+        filter.process({sample("temp-1", 20.0f)});
+
+        nearlyEqual(filter.process({sample("temp-1", 80.0f)})[0].value, 40.0f,
+                    "First step response should contain two old values");
+        nearlyEqual(filter.process({sample("temp-1", 80.0f)})[0].value, 60.0f,
+                    "Second step response should contain one old value");
+        nearlyEqual(filter.process({sample("temp-1", 80.0f)})[0].value, 80.0f,
+                    "Filter should settle after one full window");
+}
+
 }

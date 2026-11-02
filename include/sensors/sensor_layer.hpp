@@ -12,6 +12,18 @@ class SensorLayer {
         sensors_; // The sensor layer owns a list of sensor objects. Because the list contains
                   // ISensorSource pointers, it can store different sensor types together
 
+    static bool isInRange(const SensorSample &sample) {
+        switch (sample.type) {
+        case SensorType::Temperature:
+            return sample.value >= -40.0f && sample.value <= 125.0f;
+        case SensorType::Pressure:
+            return sample.value >= 0.0f && sample.value <= 500.0f;
+        case SensorType::Flow:
+            return sample.value >= 0.0f && sample.value <= 100.0f;
+        }
+        return false;
+    }
+    
   public:
     SensorLayer() = default;
     SensorLayer(const SensorLayer &) = delete;
@@ -44,7 +56,7 @@ class SensorLayer {
             You could later add range validation here, such as rejecting a temperature below -40 °C
             or above 125 °C.
             */
-            if (sample.status != SensorStatus::Connected || !std::isfinite(sample.value)) {
+            if (sample.status != SensorStatus::Connected || !std::isfinite(sample.value)|| !isInRange(sample)) {
                 sample.status = SensorStatus::Invalid;
             }
 
@@ -53,4 +65,5 @@ class SensorLayer {
 
         return samples;
     }
+
 };

@@ -90,3 +90,43 @@ add_test(
     NAME FilterLayerTests
     COMMAND FilterLayerTests
 )
+
+add_executable(ControllerTests
+    tests/controller_tests.cpp
+)
+
+target_link_libraries(ControllerTests PRIVATE
+    sensor-library
+)
+
+add_test(
+    NAME ControllerTests
+    COMMAND ControllerTests
+)
+
+add_executable(HeaterControllerTests
+    tests/heater_controller_tests.cpp
+)
+
+target_link_libraries(HeaterControllerTests PRIVATE
+    sensor-library
+)
+
+add_test(
+    NAME HeaterControllerTests
+    COMMAND HeaterControllerTests
+)
+
+
+add_executable(ThermalPlantTests
+    tests/thermal_plant_tests.cpp
+)
+
+target_link_libraries(ThermalPlantTests PRIVATE
+    sensor-library
+)
+
+add_test(
+    NAME ThermalPlantTests
+    COMMAND ThermalPlantTests
+)

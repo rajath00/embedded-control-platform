@@ -119,4 +119,23 @@ int main() {
         assert(samples[0].status == SensorStatus::Invalid &&
                "Infinity measurement must be invalid");
     }
+
+    //7. out of range test
+
+    {
+        SensorLayer layer;
+
+        layer.addSensor(std::make_unique<FakeSensor>(
+            makeSample("temp-1",SensorType::Temperature,-40.1f,"C")));
+        
+            layer.addSensor(std::make_unique<FakeSensor>(
+            makeSample("temp-2",SensorType::Temperature,-40.0f,"C")));
+
+        const auto samples = layer.readAll();
+        assert(samples.size()==2);
+        assert(samples[0].status==SensorStatus::Invalid && "Out of bound measurement must be Invalid");
+
+        assert(samples[1].status==SensorStatus::Connected && "measurement must be valid");
+    }
+
 }
