@@ -130,3 +130,18 @@ add_test(
     NAME ThermalPlantTests
     COMMAND ThermalPlantTests
 )
+
+
+add_executable(ControlPlatformTests
+    tests/control_platform_tests.cpp
+)
+
+target_link_libraries(ControlPlatformTests PRIVATE
+    sensor-library
+    filter-library
+)
+
+add_test(
+    NAME ControlPlatformTests
+    COMMAND ControlPlatformTests
+)
